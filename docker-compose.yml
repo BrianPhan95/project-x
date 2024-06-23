@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  projectx.httpapi.host:
+    image: ${DOCKER_REGISTRY-}projectxhttpapihost
+    build:
+      context: .
+      dockerfile: src/ProjectX.HttpApi.Host/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+  projectx.database:
+    image: postgres:latest
+    container_name: projectx.database
+    environment:
+        - POSTGRES_DB=ProjectX
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password123
+    volumes:
+        - ./.containers/products-db:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+  migrator:
+    image: ${DOCKER_REGISTRY-}projectxmigrator
+    build:
+        context: .
+        dockerfile: src/ProjectX.DbMigrator/Dockerfile
+  
